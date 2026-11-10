@@ -1,4 +1,4 @@
-/* 一饭一山河 · 中华美食影像档案 */
+/* 一饭一山河 · 六集美食纪录片 */
 (function () {
   var D = window.FOOD_DATA || {};
   var STORIES = D.STORIES || [], CUISINES = D.CUISINES || [], DISHES = D.DISHES || [], VIDEOS = D.VIDEOS || [];
@@ -7,18 +7,9 @@
   var NS = "http://www.w3.org/2000/svg";
   var COLOR = { cuisine: "#c8402e", dish: "#c9a25c", ingredient: "#8f9d7a", region: "#6f8fa8", technique: "#a88f6f", flavor: "#d07a4a" };
 
-  /* ---------- 主题 ---------- */
-  var root = document.documentElement;
-  try { if (localStorage.getItem("food-theme") === "light") root.classList.add("light"); } catch (e) {}
-  var tb = $(".theme-toggle");
-  if (tb) tb.addEventListener("click", function () {
-    root.classList.toggle("light");
-    try { localStorage.setItem("food-theme", root.classList.contains("light") ? "light" : "dark"); } catch (e) {}
-  });
-
   /* ---------- BGM ---------- */
-  var bgm = $("#bgm"), bgmBtn = $("#bgmToggle"), bgmStart = $("#bgmStart");
-  var bgmOn = false, ducked = false;
+  var bgm = $("#bgm"), bgmBtn = $("#bgmToggle");
+  var bgmOn = false;
   if (bgm) bgm.volume = 0;
   function fadeTo(target, ms) {
     if (!bgm) return;
@@ -35,137 +26,139 @@
     bgmOn = on;
     if (on) {
       bgm.play().then(function () {
-        fadeTo(ducked ? 0.06 : 0.30, 1800);
+        fadeTo(0.28, 1800);
         if (bgmBtn) { bgmBtn.classList.add("playing"); bgmBtn.querySelector(".bgm-text").textContent = "音乐中"; }
-        try { localStorage.setItem("food-bgm", "1"); } catch (e) {}
       }).catch(function () { bgmOn = false; });
     } else {
-      fadeTo(0, 600);
-      setTimeout(function () { if (!bgmOn) bgm.pause(); }, 650);
+      fadeTo(0, 500);
+      setTimeout(function () { if (!bgmOn) bgm.pause(); }, 560);
       if (bgmBtn) { bgmBtn.classList.remove("playing"); bgmBtn.querySelector(".bgm-text").textContent = "音乐"; }
-      try { localStorage.setItem("food-bgm", "0"); } catch (e) {}
     }
   }
   if (bgmBtn) bgmBtn.addEventListener("click", function () { setBgm(!bgmOn); });
-  if (bgmStart) bgmStart.addEventListener("click", function () {
-    setBgm(true);
-    var eps = $("#episodes"); if (eps) eps.scrollIntoView({ behavior: "smooth" });
-  });
-  // 首次交互即淡入背景音乐（浏览器自动播放限制下的常见做法）
   document.addEventListener("pointerdown", function once(e) {
     document.removeEventListener("pointerdown", once);
     if (bgmOn) return;
-    if (e.target.closest && e.target.closest("#bgmToggle,#bgmStart")) return;
+    if (e.target.closest && e.target.closest("#bgmToggle")) return;
     setBgm(true);
   }, { once: true });
-  try { if (localStorage.getItem("food-bgm") === "1" && bgm) bgm.play().then(function () { bgmOn = true; fadeTo(0.30, 1200); if (bgmBtn) { bgmBtn.classList.add("playing"); bgmBtn.querySelector(".bgm-text").textContent = "音乐中"; } }).catch(function () {}); } catch (e) {}
 
-  /* ---------- 顶栏 / 回顶 ---------- */
-  var topBar = $("#topBar"), backtop = $("#backtop");
-  function onScroll() {
-    if (topBar) topBar.classList.toggle("scrolled", window.scrollY > 40);
-    if (backtop) backtop.classList.toggle("show", window.scrollY > 800);
-  }
+  /* ---------- 顶栏 ---------- */
+  var topBar = $("#topBar");
+  var backtop = $("#backtop");
+  window.addEventListener("scroll", function () {
+    if (topBar) topBar.classList.toggle("scrolled", window.scrollY > 30);
+    if (backtop) backtop.classList.toggle("show", window.scrollY > window.innerHeight * 1.2);
+  }, { passive: true });
   if (backtop) backtop.addEventListener("click", function () { window.scrollTo({ top: 0, behavior: "smooth" }); });
-  window.addEventListener("scroll", onScroll, { passive: true });
 
-  /* ---------- 真人旁白音频 ---------- */
-  var NARRATION_FILES = {
-    "01": "assets/audio/narration/ep01.mp3",
-    "02": "assets/audio/narration/ep02.mp3",
-    "03": "assets/audio/narration/ep03.mp3",
-    "04": "assets/audio/narration/ep04.mp3",
-    "05": "assets/audio/narration/ep05.mp3",
-    "06": "assets/audio/narration/ep06.mp3"
-  };
-  var narration = new Audio(); narration.preload = "none";
-  var narrationBtn = null;
-  function duckBgm(on) { ducked = on; if (bgm && bgmOn) fadeTo(on ? 0.06 : 0.30, 500); }
-  function stopNarration() {
-    try { narration.pause(); narration.currentTime = 0; } catch (e) {}
-    duckBgm(false);
-    if (narrationBtn) { narrationBtn.textContent = "▶ 听旁白"; narrationBtn = null; }
-  }
-  function playNarration(ep, btn) {
-    var src = NARRATION_FILES[ep];
-    if (!src) return;
-    stopNarration();
-    narrationBtn = btn;
-    narration.src = src;
-    var p = narration.play();
-    if (p && p.catch) p.catch(function () {
-      if (btn) { btn.textContent = "旁白录制中"; btn.disabled = true; }
-      narrationBtn = null; duckBgm(false);
+  /* ---------- 影片 ---------- */
+  var film = $("#film"), now = $("#nowPlaying");
+  var progress = document.createElement("div");
+  progress.className = "progress";
+  document.body.appendChild(progress);
+  var cards = [];
+  if (film) {
+    var op = document.createElement("section");
+    op.className = "opening";
+    op.id = "opening";
+    op.innerHTML =
+      '<span class="op-seal"><span class="seal">食</span></span>' +
+      '<p class="op-eyebrow">A DOCUMENTARY IN SIX PARTS</p>' +
+      '<h1 class="op-title">一饭一山河</h1>' +
+      '<p class="op-sub">六段关于中国人的食事</p>' +
+      '<p class="op-meta">八大菜系 · 五十道菜 · 二十四组镜头</p>' +
+      '<button class="op-play" id="opPlay" type="button">▶ 开始放映</button>' +
+      '<p class="op-note">建议开启声音 · 原创配乐 · 真人旁白录制中</p>';
+    film.appendChild(op);
+
+    STORIES.forEach(function (s) {
+      var card = document.createElement("section");
+      card.className = "card";
+      card.id = "ep-" + s.ep;
+      card.dataset.ep = s.ep;
+      card.innerHTML =
+        '<p class="card-no">第 ' + s.ep + ' 集 · EPISODE ' + s.ep + "</p>" +
+        '<p class="card-num">' + s.ep + "</p>" +
+        '<h1 class="card-title">' + s.title + "</h1>" +
+        '<p class="card-quote">“' + s.quote + '”</p>' +
+        '<p class="card-en">' + s.kicker + "</p>";
+      film.appendChild(card);
+      cards.push(card);
+
+      (s.shots || []).forEach(function (sh, idx) {
+        var shot = document.createElement("section");
+        shot.className = "shot";
+        shot.dataset.ep = s.ep;
+        shot.innerHTML =
+          '<div class="shot-bg" style="background-image:url(\'' + sh.img + '\')"></div>' +
+          '<div class="shot-shade"></div>' +
+          '<span class="tc">' + sh.time + "</span>" +
+          '<span class="shot-count">' + String(idx + 1).padStart(2, "0") + " / " + String(s.shots.length).padStart(2, "0") + "</span>" +
+          '<span class="place">' + sh.place + "</span>" +
+          '<p class="subtitle">' + sh.line + "</p>" +
+          '<span class="shot-hint">SCROLL</span>';
+        film.appendChild(shot);
+      });
     });
-    if (btn) btn.textContent = "❚❚ 旁白中";
-    duckBgm(true);
-  }
-  narration.addEventListener("ended", stopNarration);
-  narration.addEventListener("error", function () {
-    if (narrationBtn) { narrationBtn.textContent = "旁白录制中"; narrationBtn.disabled = true; }
-    narrationBtn = null; duckBgm(false);
-  });
 
-  /* ---------- HERO ---------- */
-  var hero = $(".hero"), heroBg = $(".hero-bg"), heroEp = $("#heroEp"), heroCap = $("#heroCap");
-  if (heroBg && STORIES.length) heroBg.style.backgroundImage = "url('" + STORIES[0].image + "')";
-  if (heroCap && STORIES.length) heroCap.textContent = "EP.01 · " + STORIES[0].title;
-  if (heroEp) STORIES.forEach(function (s) {
-    var a = document.createElement("a");
-    a.href = "#ep-" + s.ep; a.innerHTML = "<b>" + s.ep + "</b>" + s.title;
-    heroEp.appendChild(a);
-  });
+    var credits = document.createElement("section");
+    credits.className = "credits";
+    credits.innerHTML =
+      "<h2>一饭一山河</h2>" +
+      "<p>撰稿 / 编辑 · 本站</p>" +
+      "<p>摄影 · 公开资料整理</p>" +
+      "<p>配乐 · 原创合成</p>" +
+      "<p>旁白 · 真人录制中</p>" +
+      "<p>出品 · 非官方美食文化档案</p>" +
+      '<p class="end">一饭一山河</p>';
+    film.appendChild(credits);
 
-  /* ---------- EPISODES ---------- */
-  var epWrap = $("#episodes");
-  if (epWrap) STORIES.forEach(function (s, i) {
-    var el = document.createElement("article");
-    el.className = "ep" + (i % 2 ? " rev" : "");
-    el.id = "ep-" + s.ep;
-    var dishesHtml = (s.dishes || []).map(function (name) {
-      var d = DISHES.filter(function (x) { return x.name === name; })[0];
-      if (!d) return "";
-      return '<span class="ep-dish" data-name="' + d.name + '"><img src="' + d.img + '" alt="" />' + d.name + "</span>";
-    }).join("");
-    el.innerHTML =
-      '<div class="ep-visual" style="background-image:url(\'' + s.image + '\')">' +
-        '<span class="ep-no">EP.' + s.ep + "</span>" +
-        '<span class="ep-cap">' + s.kicker + "</span>" +
-        (s.image2 ? '<div class="ep-inset" style="background-image:url(\'' + s.image2 + '\')"></div>' : "") +
-      "</div>" +
-      '<div class="ep-text">' +
-        '<span class="ep-kicker">' + s.kicker + "</span>" +
-        "<h2>" + s.title + "</h2>" +
-        s.paragraphs.map(function (p) { return "<p>" + p + "</p>"; }).join("") +
-        '<blockquote class="ep-quote">' + s.quote + "</blockquote>" +
-        '<div class="ep-dishes">' + dishesHtml + "</div>" +
-        '<div class="ep-actions"><button class="ep-btn primary" type="button">▶ 听旁白</button><button class="ep-btn" type="button">■ 停止</button></div>' +
-      "</div>";
-    epWrap.appendChild(el);
-    var btn = el.querySelector(".ep-btn.primary"), stop = el.querySelectorAll(".ep-btn")[1];
-    if (btn) btn.addEventListener("click", function () { playNarration(s.ep, btn); });
-    if (stop) stop.addEventListener("click", stopSpeech);
-    el.addEventListener("click", function (e) {
-      var chip = e.target.closest && e.target.closest(".ep-dish");
-      if (chip) {
-        var d = DISHES.filter(function (x) { return x.name === chip.dataset.name; })[0];
-        if (d) openDish(d);
-      }
+    // 进度点
+    STORIES.forEach(function (s) {
+      var i = document.createElement("i");
+      i.dataset.ep = s.ep;
+      i.title = "第 " + s.ep + " 集";
+      i.addEventListener("click", function () {
+        var el = document.getElementById("ep-" + s.ep);
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      });
+      progress.appendChild(i);
     });
-  });
+
+    var playBtn = $("#opPlay");
+    if (playBtn) playBtn.addEventListener("click", function () {
+      setBgm(true);
+      var first = document.getElementById("ep-" + STORIES[0].ep);
+      if (first) first.scrollIntoView({ behavior: "smooth" });
+    });
+
+    // 当前集
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var ep = en.target.dataset.ep;
+        if (!ep) return;
+        var s = STORIES.filter(function (x) { return x.ep === ep; })[0];
+        if (s && now) now.textContent = "第 " + s.ep + " 集 · " + s.title;
+        $$("i", progress).forEach(function (i) { i.classList.toggle("on", i.dataset.ep === ep); });
+      });
+    }, { threshold: 0.35 });
+    STORIES.forEach(function (s) {
+      var c = document.getElementById("ep-" + s.ep);
+      if (c) io.observe(c);
+      $$('.shot[data-ep="' + s.ep + '"]').forEach(function (el) { io.observe(el); });
+    });
+  }
 
   /* ---------- 菜系 ---------- */
   var strip = $("#cuisineStrip");
   if (strip) CUISINES.forEach(function (c) {
     var n = DISHES.filter(function (d) { return d.cuisine === c.name; }).length;
     var el = document.createElement("article");
-    el.className = "cz-card";
-    el.style.setProperty("--c", c.color);
+    el.className = "cz-card"; el.style.setProperty("--c", c.color);
     el.innerHTML = "<h3>" + c.name + "</h3><span class=\"en\">" + c.en + " · " + n + " 道</span><p>" + c.intro + "</p>";
-    el.addEventListener("click", function () {
-      setFilter(c.name);
-      $("#dishes") && $("#dishes").scrollIntoView({ behavior: "smooth" });
-    });
+    el.addEventListener("click", function () { setFilter(c.name); var x = $("#dishIndex"); if (x) x.scrollIntoView({ behavior: "smooth" }); });
     strip.appendChild(el);
   });
 
@@ -173,23 +166,18 @@
   var indexWrap = $("#dishIndex"), filters = $("#dishFilters");
   function tile(d) {
     var el = document.createElement("article");
-    el.className = "dish-tile";
-    el.dataset.cuisine = d.cuisine;
-    el.dataset.name = d.name;
+    el.className = "dish-tile"; el.dataset.cuisine = d.cuisine; el.dataset.name = d.name;
     el.innerHTML = '<img src="' + d.img + '" alt="' + d.name + '" loading="lazy" /><div class="tile-shade"></div>' +
       '<div class="tile-info"><h3>' + d.name + "</h3><p>" + d.cuisine + " · " + d.flavor + "</p></div>";
     return el;
   }
   if (indexWrap) DISHES.forEach(function (d) { indexWrap.appendChild(tile(d)); });
-  if (filters) {
-    ["全部"].concat(CUISINES.map(function (c) { return c.name; })).forEach(function (name, i) {
-      var b = document.createElement("button");
-      b.className = "df-chip" + (i === 0 ? " active" : "");
-      b.type = "button"; b.textContent = name; b.dataset.filter = name;
-      b.addEventListener("click", function () { setFilter(name); });
-      filters.appendChild(b);
-    });
-  }
+  if (filters) ["全部"].concat(CUISINES.map(function (c) { return c.name; })).forEach(function (name, i) {
+    var b = document.createElement("button");
+    b.className = "df-chip" + (i === 0 ? " active" : ""); b.type = "button"; b.textContent = name; b.dataset.filter = name;
+    b.addEventListener("click", function () { setFilter(name); });
+    filters.appendChild(b);
+  });
   function setFilter(name) {
     if (filters) $$(".df-chip", filters).forEach(function (b) { b.classList.toggle("active", b.dataset.filter === name); });
     if (indexWrap) $$(".dish-tile", indexWrap).forEach(function (t) { t.style.display = (name === "全部" || t.dataset.cuisine === name) ? "" : "none"; });
@@ -201,13 +189,13 @@
     if (d) openDish(d);
   });
 
-  /* ---------- 影像 ---------- */
+  /* ---------- 官方影像 ---------- */
   var stage = $("#filmStage"), frame = $("#filmFrame"), poster = $("#filmPosterImg"),
-      fTitle = $("#filmTitle"), fSub = $("#filmSub"), fList = $("#filmList"), playBtn = $("#filmPlayBtn");
+      fTitle = $("#filmTitle"), fSub = $("#filmSub"), fList = $("#filmList"), playBtn2 = $("#filmPlayBtn");
   var current = 0;
   function posterFor(v) {
     var list = DISHES.filter(function (d) { return d.cuisine === v.cuisine; });
-    return (list[0] || {}).img || (STORIES[0] || {}).image || "";
+    return (list[0] || {}).img || "";
   }
   function selectFilm(i) {
     current = i; var v = VIDEOS[i]; if (!v) return;
@@ -223,15 +211,15 @@
     b.addEventListener("click", function () { selectFilm(i); });
     fList.appendChild(b);
   });
-  if (playBtn) playBtn.addEventListener("click", function () {
+  if (playBtn2) playBtn2.addEventListener("click", function () {
     var v = VIDEOS[current]; if (!v || !frame || !stage) return;
     frame.innerHTML = '<iframe src="https://player.bilibili.com/player.html?isOutside=true&bvid=' + v.bv +
       '&autoplay=1&danmaku=0&high_quality=1" title="' + v.title + '" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
-    stage.classList.add("playing"); stopSpeech();
+    stage.classList.add("playing");
   });
   if (stage) selectFilm(0);
 
-  /* ---------- 菜品详情 ---------- */
+  /* ---------- 菜品弹窗 ---------- */
   var modal = $("#dishModal");
   function openDish(d) {
     if (!modal) return;
@@ -239,26 +227,24 @@
     $("#dmCuisine").textContent = (d.region ? d.region + " · " : "") + d.cuisine;
     $("#dmName").textContent = d.name;
     $("#dmFlavor").textContent = "味型：" + d.flavor;
-    $("#dmNarration").textContent = d.narration || (d.story + " 它的味道是" + d.flavor + "。");
+    $("#dmNarration").textContent = d.narration || d.story;
     $("#dmIng").textContent = d.ingredients;
     var vid = $("#dmVideo"); if (vid) { vid.classList.remove("on"); vid.innerHTML = ""; }
     modal.classList.add("on"); modal.setAttribute("aria-hidden", "false"); document.body.style.overflow = "hidden";
   }
-  function closeDish() {
-    if (!modal) return;
-    stopSpeech(); modal.classList.remove("on"); modal.setAttribute("aria-hidden", "true"); document.body.style.overflow = "";
-  }
+  function closeDish() { if (modal) { modal.classList.remove("on"); modal.setAttribute("aria-hidden", "true"); document.body.style.overflow = ""; } }
   var dmClose = $("#dmClose"); if (dmClose) dmClose.addEventListener("click", closeDish);
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeDish(); });
+  var dmClose2 = $("#dmClose2"); if (dmClose2) dmClose2.addEventListener("click", closeDish);
   if (modal) modal.addEventListener("click", function (e) { if (e.target === modal) closeDish(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeDish(); });
   var dmVideoBtn = $("#dmVideoBtn");
   if (dmVideoBtn) dmVideoBtn.addEventListener("click", function () {
     var name = $("#dmName").textContent;
     var d = DISHES.filter(function (x) { return x.name === name; })[0];
-    if (!d || !d.bv) { alert("这道菜的做法视频还在补充中"); return; }
+    if (!d || !d.bv) return;
     var host = $("#dmVideo");
     host.innerHTML = '<iframe src="https://player.bilibili.com/player.html?isOutside=true&bvid=' + d.bv + '&autoplay=1&danmaku=0&high_quality=1" title="' + d.name + ' 做法" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
-    host.classList.add("on"); stopNarration();
+    host.classList.add("on");
   });
 
   /* ---------- 关系图谱 ---------- */
@@ -280,7 +266,7 @@
   var REGION = { "川菜": "四川", "粤菜": "广东", "苏菜": "江苏", "鲁菜": "山东", "浙菜": "浙江", "闽菜": "福建", "湘菜": "湖南", "徽菜": "安徽" };
   var TECH = { "川菜": ["炒", "烧", "爆"], "粤菜": ["蒸", "煲", "灼"], "苏菜": ["炖", "煨", "蒸"], "鲁菜": ["爆", "炒", "烧"], "浙菜": ["炒", "蒸", "烩"], "闽菜": ["煨", "蒸", "炒"], "湘菜": ["炒", "蒸", "腊"], "徽菜": ["烧", "炖", "熏"] };
   var FEATURES = ["麻辣", "香辣", "咸鲜", "清鲜", "酸甜", "咸甜", "咸香", "酸香", "鲜香", "茶香", "发酵香", "重火功"];
-  var flavorNodes = {};
+  var fmap = {};
   CUISINES.forEach(function (c, i) {
     var ang = i / CUISINES.length * Math.PI * 2 - Math.PI / 2, R = 260;
     var x = CX + Math.cos(ang) * R, y = CY + Math.sin(ang) * R * 0.78;
@@ -304,7 +290,7 @@
     });
     FEATURES.forEach(function (f) {
       if (d.flavor.indexOf(f) < 0) return;
-      if (!flavorNodes[f]) { flavorNodes[f] = 1; addNode("fl:" + f, f, "flavor", null, CX + (Math.random() - .5) * 650, CY + (Math.random() - .5) * 440); }
+      if (!fmap[f]) { fmap[f] = 1; addNode("fl:" + f, f, "flavor", null, CX + (Math.random() - .5) * 640, CY + (Math.random() - .5) * 430); }
       addLink("dish:" + i, "fl:" + f, "味型");
     });
   });
@@ -332,39 +318,31 @@
     gLines.innerHTML = ""; gNodes.innerHTML = "";
     linkEls = links.map(function (l) {
       var p = document.createElementNS(NS, "path");
-      p.setAttribute("fill", "none"); p.setAttribute("stroke", "rgba(243,234,216,.13)"); p.setAttribute("stroke-width", "1");
+      p.setAttribute("fill", "none"); p.setAttribute("stroke", "rgba(244,236,219,.13)"); p.setAttribute("stroke-width", "1");
       gLines.appendChild(p); return { el: p, l: l };
     });
     nodes.forEach(function (n) {
       var g = document.createElementNS(NS, "g");
-      var r = n.type === "cuisine" ? 18 : n.type === "dish" ? 9 : n.type === "region" ? 13 : n.type === "flavor" ? 8 : 5;
+      var r = n.type === "cuisine" ? 17 : n.type === "dish" ? 8.5 : n.type === "region" ? 12 : n.type === "flavor" ? 7.5 : 4.5;
       var c = document.createElementNS(NS, "circle");
       c.setAttribute("r", r); c.setAttribute("fill", n.color || COLOR[n.type] || "#888");
-      c.setAttribute("stroke", n.type === "cuisine" ? "rgba(255,246,232,.85)" : "rgba(243,234,216,.3)");
-      c.setAttribute("stroke-width", n.type === "cuisine" ? 2.4 : 1);
-      g.appendChild(c);
+      c.setAttribute("stroke", n.type === "cuisine" ? "rgba(255,246,232,.85)" : "rgba(244,236,219,.3)");
+      c.setAttribute("stroke-width", n.type === "cuisine" ? 2.2 : 1); g.appendChild(c);
       var t = document.createElementNS(NS, "text");
-      t.textContent = n.label; t.setAttribute("y", -r - 6); t.setAttribute("text-anchor", "middle");
-      t.setAttribute("font-size", n.type === "cuisine" ? 16 : n.type === "dish" ? 11.5 : n.type === "region" ? 12 : 9.5);
-      t.setAttribute("fill", (n.type === "cuisine" || n.type === "dish" || n.type === "region") ? "#f3ead8" : "rgba(243,234,216,.7)");
+      t.textContent = n.label; t.setAttribute("y", -r - 5); t.setAttribute("text-anchor", "middle");
+      t.setAttribute("font-size", n.type === "cuisine" ? 15 : n.type === "dish" ? 10.5 : n.type === "region" ? 11 : 9);
+      t.setAttribute("fill", (n.type === "cuisine" || n.type === "dish" || n.type === "region") ? "#f4ecdb" : "rgba(244,236,219,.7)");
       t.setAttribute("class", "rg-label");
       if (n.type === "ingredient" || n.type === "technique") t.setAttribute("opacity", "0");
       g.appendChild(t);
       g.addEventListener("click", function (e) { e.stopPropagation(); showPanel(n); });
-      gNodes.appendChild(g);
-      nodeEls[n.id] = { g: g, c: c, t: t, n: n };
-      enableDrag(g, n);
+      gNodes.appendChild(g); nodeEls[n.id] = { g: g, c: c, t: t, n: n }; enableDrag(g, n);
     });
   }
   function enableDrag(g, n) {
     var dragging = false, sx = 0, sy = 0, ox = 0, oy = 0;
-    g.addEventListener("pointerdown", function (e) {
-      dragging = true; svg.classList.add("dragging"); var pt = toLocal(e); sx = pt.x; sy = pt.y; ox = n.x; oy = n.y; alpha = Math.max(alpha, .4);
-      g.setPointerCapture && g.setPointerCapture(e.pointerId);
-    });
-    g.addEventListener("pointermove", function (e) {
-      if (!dragging) return; var pt = toLocal(e); n.x = ox + (pt.x - sx); n.y = oy + (pt.y - sy); n.vx = 0; n.vy = 0; render();
-    });
+    g.addEventListener("pointerdown", function (e) { dragging = true; svg.classList.add("dragging"); var pt = toLocal(e); sx = pt.x; sy = pt.y; ox = n.x; oy = n.y; alpha = Math.max(alpha, .4); g.setPointerCapture && g.setPointerCapture(e.pointerId); });
+    g.addEventListener("pointermove", function (e) { if (!dragging) return; var pt = toLocal(e); n.x = ox + (pt.x - sx); n.y = oy + (pt.y - sy); n.vx = 0; n.vy = 0; render(); });
     g.addEventListener("pointerup", function () { dragging = false; svg.classList.remove("dragging"); });
     g.addEventListener("pointerleave", function () { dragging = false; svg.classList.remove("dragging"); });
   }
@@ -372,7 +350,7 @@
   function render() {
     linkEls.forEach(function (o) {
       var a = o.l.s, b = o.l.t, dx = b.x - a.x, dy = b.y - a.y, d = Math.sqrt(dx * dx + dy * dy) || 1;
-      var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2, cx = mx - dy / d * 18, cy = my + dx / d * 18;
+      var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2, cx = mx - dy / d * 16, cy = my + dx / d * 16;
       o.el.setAttribute("d", "M" + a.x + "," + a.y + " Q" + cx + "," + cy + " " + b.x + "," + b.y);
     });
     nodes.forEach(function (n) { var e = nodeEls[n.id]; if (e) e.g.setAttribute("transform", "translate(" + n.x + "," + n.y + ")"); });
@@ -387,24 +365,16 @@
     });
   }
   $$(".gt-chip").forEach(function (b) {
-    b.addEventListener("click", function () {
-      filterType = b.dataset.g;
-      $$(".gt-chip").forEach(function (x) { x.classList.toggle("active", x === b); });
-      dim();
-    });
+    b.addEventListener("click", function () { filterType = b.dataset.g; $$(".gt-chip").forEach(function (x) { x.classList.toggle("active", x === b); }); dim(); });
   });
   function showPanel(n) {
     if (!panel) return;
     var rel = links.filter(function (l) { return l.s === n || l.t === n; });
-    var items = rel.slice(0, 14).map(function (l) {
-      var other = l.s === n ? l.t : l.s;
-      return "<li>" + (l.s === n ? "→ " : "← ") + other.label + " <span style=\"color:#8a7f6b\">（" + l.rel + "）</span></li>";
-    }).join("");
+    var items = rel.slice(0, 14).map(function (l) { var other = l.s === n ? l.t : l.s; return "<li>" + (l.s === n ? "→ " : "← ") + other.label + " <span style=\"color:#8a7f6b\">（" + l.rel + "）</span></li>"; }).join("");
     panel.innerHTML = "<h4>" + n.label + "</h4><div class=\"gp-type\">" + n.type.toUpperCase() + (n.flavor ? " · " + n.flavor : "") + "</div><ul>" + (items || "<li>暂无关联</li>") + "</ul>";
     panel.classList.add("on");
   }
-  svg.addEventListener("click", function () { panel && panel.classList.remove("on"); });
+  svg.addEventListener("click", function () { if (panel) panel.classList.remove("on"); });
   build(); dim();
   (function loop() { tick(); render(); alpha = Math.max(alpha * 0.997, 0.006); requestAnimationFrame(loop); })();
-  onScroll();
 })();

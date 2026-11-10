@@ -3,104 +3,53 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>一饭一山河 · 中华美食影像档案</title>
-<meta name="description" content="六段关于中国人的食事：清晨、火候、山海、家常、迁徙、时令。八大菜系，五十道菜，一部有温度的中华美食影像档案。非官方、非商业。" />
-<meta name="theme-color" content="#0b0908" />
+<title>一饭一山河 · 六集美食纪录片</title>
+<meta name="description" content="一部模仿央视纪录片语言的中式美食影像：六集、二十四组镜头、八大菜系、五十道菜。原创配乐，非官方、非商业。" />
+<meta name="theme-color" content="#000000" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c8402e'/%3E%3Ctext x='16' y='23' font-size='17' font-family='serif' fill='%23f2ead9' text-anchor='middle'%3E食%3C/text%3E%3C/svg%3E" />
-<link rel="stylesheet" href="styles.css?v=4" />
+<link rel="stylesheet" href="styles.css?v=5" />
 </head>
 <body id="top">
-<a class="skip-link" href="#main">跳到主要内容</a>
+<a class="skip-link" href="#film">跳到影片</a>
 
 <header class="top" id="topBar">
   <a class="brand" href="#top">
     <span class="seal">食</span>
-    <span class="brand-text"><strong>一饭一山河</strong><small>A FOOD DOCUMENTARY ARCHIVE</small></span>
+    <span class="brand-text"><strong>一饭一山河</strong><small>A DOCUMENTARY IN SIX PARTS</small></span>
   </a>
-  <nav class="nav" aria-label="主导航">
-    <a href="#episodes">六段食事</a>
-    <a href="#cuisines">八大菜系</a>
-    <a href="#graph">风味图谱</a>
-    <a href="#films">影像</a>
+  <span class="now" id="nowPlaying">第 1 集 · 清晨，一碗面的时间</span>
+  <nav class="nav">
+    <a href="#appendix">档案附录</a>
   </nav>
   <div class="top-meta">
-    <button class="bgm-toggle" id="bgmToggle" type="button" aria-label="背景音乐" title="背景音乐">
-      <span class="bgm-icon">♫</span><span class="bgm-text">音乐</span>
-    </button>
-    <button class="theme-toggle" type="button" aria-label="切换明暗" title="明 / 暗"><span class="t-sun">☀</span><span class="t-moon">☾</span></button>
+    <button class="bgm-toggle" id="bgmToggle" type="button"><span class="bgm-icon">♫</span><span class="bgm-text">音乐</span></button>
   </div>
 </header>
 
 <audio id="bgm" loop preload="none" src="assets/audio/ambient.mp3"></audio>
 
-<!-- HERO -->
-<section class="hero" id="main">
-  <div class="hero-bg"></div>
-  <div class="hero-shade"></div>
-  <div class="hero-grain"></div>
-  <div class="hero-content">
-    <span class="chapter">A DOCUMENTARY IN SIX CHAPTERS · 2026</span>
-    <h1 class="hero-title">一饭<span class="red">一山河</span></h1>
-    <p class="hero-line">六段关于中国人的食事</p>
-    <p class="hero-desc">不是菜谱，是人的故事。<br />从清晨的第一锅汤，到年夜饭桌上的那一筷。</p>
-    <div class="hero-actions">
-      <a class="btn btn-red" href="#episodes">开始观看 <span>↓</span></a>
-      <button class="btn btn-line" id="bgmStart" type="button">♫ 开启声音</button>
-    </div>
-    <p class="hero-hint">原创配乐已上线；真人旁白正在录制，先以文字与画面呈现。</p>
-  </div>
-  <div class="hero-ep" id="heroEp"></div>
-  <div class="hero-foot">
-    <span class="hero-cap" id="heroCap">—</span>
-    <span class="scroll-cue">SCROLL TO BEGIN</span>
-  </div>
-</section>
+<main id="film"></main>
 
-<!-- MANIFESTO -->
-<section class="manifesto">
-  <p class="intro-kicker">为什么按地域，而不是按菜单</p>
-  <p class="intro-lead">味道不是凭空长出来的。它由气候、物产、迁徙、历史与家常一起决定。所以我们走进八片土地，把五十道菜放回它们出生和生活的地方。</p>
-  <div class="stats">
-    <div class="stat"><b>06</b><span>段食事</span></div>
-    <div class="stat"><b>08</b><span>大菜系</span></div>
-    <div class="stat"><b>50</b><span>道菜</span></div>
-    <div class="stat"><b>01</b><span>张风味图谱</span></div>
-  </div>
-</section>
-
-<!-- EPISODES -->
-<main id="stories">
-  <div id="episodes"></div>
-</main>
-
-<!-- CUISINES -->
-<section class="section cuisines" id="cuisines">
-  <header class="section-head">
-    <span class="chapter">THE EIGHT CUISINES</span>
-    <h2>八片土地，八种性格</h2>
-    <p>川鲁粤苏浙闽湘徽。点一个菜系，看它的菜。</p>
+<!-- 档案附录 -->
+<section class="appendix" id="appendix">
+  <header class="appendix-head">
+    <span class="chapter">APPENDIX / 档案附录</span>
+    <h2>八片土地，五十道菜</h2>
+    <p>影片之外，是完整的菜系与菜品档案。</p>
   </header>
+
   <div class="cuisine-strip" id="cuisineStrip"></div>
-</section>
 
-<!-- DISH INDEX -->
-<section class="section index" id="dishes">
-  <header class="section-head">
-    <span class="chapter">THE DISH INDEX</span>
-    <h2>五十道菜</h2>
-    <p>故事的注脚。点开任意一道，听解说、看做菜。</p>
-  </header>
-  <div class="dish-filters" id="dishFilters"></div>
+  <div class="appendix-sub">
+    <h3>五十道菜</h3>
+    <div class="dish-filters" id="dishFilters"></div>
+  </div>
   <div class="dish-index" id="dishIndex"></div>
-</section>
 
-<!-- GRAPH -->
-<section class="section graph-sec" id="graph">
-  <header class="section-head">
-    <span class="chapter">THE FLAVOR GRAPH</span>
-    <h2>风味关系图谱</h2>
-    <p>八菜系、五十道菜、食材、地区、技法与味型，如何彼此牵连。</p>
-  </header>
+  <div class="appendix-sub">
+    <h3>风味关系图谱</h3>
+    <p>菜系、菜品、食材、地区、技法与味型。</p>
+  </div>
   <div class="graph-wrap">
     <svg id="foodGraph" role="img" aria-label="中华美食风味关系图"></svg>
     <div class="graph-panel" id="graphPanel"></div>
@@ -114,15 +63,11 @@
       <button class="gt-chip" data-g="technique">技法</button>
     </div>
   </div>
-</section>
 
-<!-- FILMS -->
-<section class="section films" id="films">
-  <header class="section-head">
-    <span class="chapter">THE FILMS</span>
-    <h2>影像馆</h2>
-    <p>纪录片与后厨实拍。同一时间，只放一部。</p>
-  </header>
+  <div class="appendix-sub">
+    <h3>官方影像</h3>
+    <p>纪录片与后厨实拍，仅作非商业介绍。</p>
+  </div>
   <div class="film-stage" id="filmStage">
     <div class="film-poster" id="filmPoster">
       <img id="filmPosterImg" alt="纪录片预览" />
@@ -136,20 +81,16 @@
     <div class="film-frame" id="filmFrame"></div>
   </div>
   <div class="film-list" id="filmList"></div>
-</section>
 
-<section class="legal" id="legal">
-  <div class="legal-inner">
-    <span class="chapter">◎ / DISCLAIMER</span>
-    <p>本站为非官方、非商业的美食文化档案，仅作介绍与欣赏，不提供商品、交易或配送服务。</p>
-    <p>中图片与影像来自公开网页资料，仅作非商业介绍；如权利人认为使用不当，请联系移除。解说为本站整理文案，背景音乐为原创合成。</p>
-    <p>菜系代表菜、做法与来历为公开资料整理，各地与家庭做法有差异，欢迎指正。联系：<a href="mailto:leooelcn@gmail.com">leooelcn@gmail.com</a></p>
+  <div class="legal" id="legal">
+    <p>非官方、非商业美食文化档案。图片与影像来自公开资料，仅作介绍；如权利人认为使用不当，请联系移除。</p>
+    <p>背景音乐为原创合成；解说字幕为本站整理文案，真人旁白录制中。联系：<a href="mailto:leooelcn@gmail.com">leooelcn@gmail.com</a></p>
   </div>
 </section>
 
 <footer class="footer">
   <span class="seal">食</span>
-  <p>一饭一山河 · 中华美食影像档案 · 六段食事</p>
+  <p>一饭一山河 · 六集美食纪录片 · 一地一风味</p>
   <a href="#top">回到开头 ↑</a>
 </footer>
 
@@ -165,17 +106,18 @@
       <dl><dt>主料</dt><dd id="dmIng"></dd></dl>
       <div class="dm-actions">
         <button class="dm-btn dm-btn-red" id="dmVideoBtn" type="button">▶ 看做菜</button>
+        <button class="dm-btn dm-btn-line" id="dmClose2" type="button">关闭</button>
       </div>
       <div class="dm-video" id="dmVideo"></div>
-      <p class="dm-source">真人旁白正在录制中，当前为文字解说；做法视频来自 B 站公开内容。</p>
+      <p class="dm-source">真人旁白录制中；做法视频来自 B 站公开内容。</p>
     </div>
   </div>
 </div>
 
 <button class="backtop" id="backtop" aria-label="回到顶部">↑</button>
 
-<script src="data.js?v=4"></script>
-<script src="app.js?v=4"></script>
+<script src="data.js?v=5"></script>
+<script src="app.js?v=5"></script>
 <script src="https://www.dengzhimin.cn/appnav.js" defer></script>
 </body>
 </html>
