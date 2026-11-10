@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="day">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>中华美食 · 各地风味档案｜一地一风味，一菜一山河</title>
+<meta name="description" content="一个以地域为线索的中华美食档案：川、粤、苏、鲁四大菜系，30 道代表菜，真实菜品照片、做法与来历。非官方、非商业。" />
+<meta name="theme-color" content="#f6f2e8" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23a8342a'/%3E%3Ctext x='16' y='23' font-size='17' font-family='serif' fill='%23f6f2e8' text-anchor='middle'%3E食%3C/text%3E%3C/svg%3E" />
+<link rel="stylesheet" href="styles.css?v=1" />
+</head>
+<body id="top">
+<a class="skip-link" href="#main">跳到主要内容</a>
+
+<header class="site-header" id="siteHeader">
+  <a class="brand" href="#top" aria-label="返回首页">
+    <span class="seal" aria-hidden="true">食</span>
+    <span class="brand-text"><strong>中华美食</strong><small>各地风味档案 · A REGIONAL FOOD ARCHIVE</small></span>
+  </a>
+  <nav class="site-nav" aria-label="主导航">
+    <a href="#flavors">风味</a>
+    <a href="#cuisines">菜系</a>
+    <a href="#skills">技法</a>
+    <a href="#films">影像</a>
+    <a href="#stories">故事</a>
+  </nav>
+  <div class="header-meta">
+    <button class="theme-toggle" type="button" aria-label="切换明暗主题" title="明 / 暗">
+      <span class="t-sun">☀</span><span class="t-moon">☾</span>
+    </button>
+  </div>
+</header>
+
+<section class="hero" id="main">
+  <div class="hero-copy">
+    <p class="kicker reveal">中华美食 · 各地风味档案</p>
+    <h1 class="hero-title reveal">一地一风味<br /><em>一菜一山河</em></h1>
+    <p class="hero-sub reveal">从川渝的麻辣，到岭南的清鲜；从淮扬的刀工，到齐鲁的汤火。</p>
+    <p class="hero-desc reveal">这张档案不按菜谱排列，而按土地排列——气候、物产、迁徙与家常，决定了我们为什么这样吃。</p>
+    <div class="hero-cta reveal">
+      <a class="btn btn-primary" href="#cuisines">走进四大菜系 <span>↘</span></a>
+      <a class="btn btn-ghost" href="#flavors">先看风味总览</a>
+    </div>
+    <div class="hero-tags reveal" id="heroTags"></div>
+  </div>
+  <div class="hero-media reveal">
+    <div class="hero-slides" id="heroSlides"></div>
+    <div class="hero-caption" id="heroCaption">—</div>
+    <div class="hero-dots" id="heroDots"></div>
+  </div>
+</section>
+
+<div class="marquee" aria-hidden="true"><div class="marquee-track" id="marqueeTrack"></div></div>
+
+<section class="section manifest" id="flavors">
+  <header class="section-head reveal">
+    <p class="section-index">01 / FLAVOR MAP</p>
+    <h2>风味总览</h2>
+    <p class="section-sub">四大菜系只是入口。真正决定味道的，是它所在的那片水土。</p>
+  </header>
+  <div class="flavor-grid" id="flavorGrid"></div>
+  <p class="note reveal">首期收录川、粤、苏、鲁四个菜系；更多地方风味会陆续补入。</p>
+</section>
+
+<section class="section" id="cuisines">
+  <header class="section-head reveal">
+    <p class="section-index">02 / CUISINE ARCHIVE</p>
+    <h2>菜系档案</h2>
+    <p class="section-sub">每个菜系 7–8 道代表菜。点开卡片，看它的主料、味型与来历。</p>
+  </header>
+  <div id="cuisineBlocks"></div>
+</section>
+
+<section class="section skills" id="skills">
+  <header class="section-head reveal">
+    <p class="section-index">03 / TECHNIQUE</p>
+    <h2>烹饪技法</h2>
+    <p class="section-sub">同一口锅，不同火候，就是不同的中国。</p>
+  </header>
+  <div class="skill-grid reveal">
+    <div class="skill"><b>炒</b><span>旺火快翻，锅气最盛</span></div>
+    <div class="skill"><b>爆</b><span>极短时间，锁住脆嫩</span></div>
+    <div class="skill"><b>熘</b><span>勾芡裹汁，滑润挂味</span></div>
+    <div class="skill"><b>炸</b><span>油温分层，外酥里嫩</span></div>
+    <div class="skill"><b>烹</b><span>先煎后汁，汁尽味入</span></div>
+    <div class="skill"><b>煎</b><span>少油贴锅，两面金黄</span></div>
+    <div class="skill"><b>烧</b><span>先煸后焖，收汁浓香</span></div>
+    <div class="skill"><b>焖</b><span>加盖慢煨，酥烂入味</span></div>
+    <div class="skill"><b>炖</b><span>小火长时，汤清味厚</span></div>
+    <div class="skill"><b>蒸</b><span>以汽为媒，存其本味</span></div>
+    <div class="skill"><b>烤</b><span>明火或炉壁，焦香四溢</span></div>
+    <div class="skill"><b>拌</b><span>冷调生香，最见原料</span></div>
+  </div>
+</section>
+
+<section class="section" id="films">
+  <header class="section-head reveal">
+    <p class="section-index">04 / FILMS</p>
+    <h2>影像馆</h2>
+    <p class="section-sub">纪录片与后厨实拍。点开在本页播放，同一时间只放一个。</p>
+  </header>
+  <div class="film-grid" id="filmGrid"></div>
+  <p class="note reveal">视频均来自 B 站公开内容，仅作非商业介绍；版权归原 UP 主与权利人。</p>
+</section>
+
+<section class="section stories" id="stories">
+  <header class="section-head reveal">
+    <p class="section-index">05 / STORIES</p>
+    <h2>食物背后</h2>
+    <p class="section-sub">一道菜的来历，往往比味道更长。</p>
+  </header>
+  <div class="story-grid">
+    <article class="story reveal"><h3>移民与融合</h3><p>客家人把咸香带进山里，广府人把汤水带向海外；一次迁徙，就是一次口味的重组。</p></article>
+    <article class="story reveal"><h3>时令与节气</h3><p>春天吃芽、夏天吃瓜、秋天吃蟹、冬天吃根。中国人用舌尖记录季节。</p></article>
+    <article class="story reveal"><h3>家常即正宗</h3><p>很多“名菜”最初都是家常菜。真正的标准，是一家人围坐时的那口味道。</p></article>
+    <article class="story reveal"><h3>一地一物</h3><p>郫县豆瓣、金华火腿、五常大米、阳澄湖蟹——风物划定了味道的边界。</p></article>
+  </div>
+</section>
+
+<section class="section legal" id="legal">
+  <header class="section-head reveal">
+    <p class="section-index">◎ / DISCLAIMER</p>
+    <h2>说明</h2>
+  </header>
+  <div class="legal-body reveal">
+    <p>本站为非官方、非商业的美食文化档案，仅作介绍与欣赏，不提供任何商品、交易或配送服务。</p>
+    <p>菜品图片来自公开网页资料，已注明来源，仅作非商业介绍；如权利人认为使用不当，请联系我们移除。</p>
+    <p>菜系代表菜、做法与来历均为公开资料的整理，不同地区与家庭做法有差异，欢迎指正。</p>
+    <p>联系：<a href="mailto:leooelcn@gmail.com">leooelcn@gmail.com</a></p>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span class="seal">食</span>
+    <p>中华美食 · 各地风味档案 · 一地一风味，一菜一山河</p>
+    <a href="#top">回到顶部 ↑</a>
+  </div>
+</footer>
+
+<div class="dish-modal" id="dishModal" aria-hidden="true">
+  <div class="dm-box" role="dialog" aria-modal="true" aria-label="菜品详情">
+    <button class="dm-close" id="dmClose" type="button" aria-label="关闭">✕</button>
+    <div class="dm-img"><img id="dmImg" alt="" /></div>
+    <div class="dm-body">
+      <span class="dm-cuisine" id="dmCuisine"></span>
+      <h3 id="dmName"></h3>
+      <p class="dm-flavor" id="dmFlavor"></p>
+      <dl>
+        <dt>主料</dt><dd id="dmIng"></dd>
+      </dl>
+      <p class="dm-story" id="dmStory"></p>
+      <p class="dm-alias" id="dmAlias"></p>
+    </div>
+  </div>
+</div>
+
+<button class="backtop" id="backtop" type="button" aria-label="回到顶部" title="回到顶部">↑</button>
+
+<script src="data.js?v=1"></script>
+<script src="app.js?v=1"></script>
+<script src="https://www.dengzhimin.cn/appnav.js" defer></script>
+</body>
+</html>
