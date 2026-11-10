@@ -38,7 +38,7 @@
     <span class="chapter">CH. 01 / A REGIONAL FOOD ARCHIVE</span>
     <h1 class="hero-title"><span>中华</span><span class="red">美食</span></h1>
     <p class="hero-line">一地一风味 · 一菜一山河</p>
-    <p class="hero-desc">从川渝的麻辣，到岭南的清鲜；从淮扬的刀工，到齐鲁的汤火。<br />这是一部按土地排列的中华美食影像档案。</p>
+    <p class="hero-desc">从川渝的麻辣，到岭南的清鲜；从淮扬的刀工，到齐鲁的汤火。<br />八片土地，五十道菜，一部按地域排列的中华美食影像档案。</p>
     <div class="hero-actions">
       <a class="btn btn-red" href="#cuisines">开始观看 <span>↓</span></a>
       <a class="btn btn-line" href="#films">直接看影像</a>
@@ -59,8 +59,8 @@
     所以我们按<b>地域</b>，而不是按菜单，来整理这份档案。
   </p>
   <div class="stats">
-    <div class="stat"><b>04</b><span>大菜系</span></div>
-    <div class="stat"><b>30</b><span>道代表菜</span></div>
+    <div class="stat"><b>08</b><span>大菜系</span></div>
+    <div class="stat"><b>50</b><span>道代表菜</span></div>
     <div class="stat"><b>12</b><span>部影像</span></div>
     <div class="stat"><b>01</b><span>张风味关系图</span></div>
   </div>
@@ -135,6 +135,7 @@
       <button class="gt-chip" data-g="dish">菜品</button>
       <button class="gt-chip" data-g="ingredient">食材</button>
       <button class="gt-chip" data-g="region">地区</button>
+      <button class="gt-chip" data-g="flavor">味型</button>
       <button class="gt-chip" data-g="technique">技法</button>
     </div>
   </div>
@@ -179,9 +180,16 @@
       <span class="dm-cuisine" id="dmCuisine"></span>
       <h3 id="dmName"></h3>
       <p class="dm-flavor" id="dmFlavor"></p>
+      <p class="dm-narration" id="dmNarration"></p>
       <dl><dt>主料</dt><dd id="dmIng"></dd></dl>
-      <p class="dm-story" id="dmStory"></p>
+      <div class="dm-actions">
+        <button class="dm-btn dm-btn-red" id="dmSpeak" type="button">▶ 听解说</button>
+        <button class="dm-btn dm-btn-line" id="dmVideoBtn" type="button">▶ 看做菜</button>
+        <button class="dm-btn dm-btn-line" id="dmStop" type="button">■ 停止</button>
+      </div>
+      <div class="dm-video" id="dmVideo"></div>
       <p class="dm-alias" id="dmAlias"></p>
+      <p class="dm-source">解说为本站整理文案；做法视频来自 B 站公开内容。</p>
     </div>
   </div>
 </div>

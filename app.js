@@ -55,7 +55,7 @@
   /* ---------- 菜系章节 ---------- */
   var chapterList = $("#chapterList");
   if (chapterList) {
-    var cn = ["壹", "贰", "叁", "肆"];
+    var cn = ["壹", "贰", "叁", "肆", "伍", "陆", "柒", "捌"];
     CUISINES.forEach(function (c, i) {
       var list = DISHES.filter(function (d) { return d.cuisine === c.name; });
       var cover = (list[0] || {}).img || HERO[i] || "";
@@ -152,31 +152,50 @@
   if (playBtn) playBtn.addEventListener("click", playFilm);
   if (stage) selectFilm(0);
 
-  /* ---------- 弹窗 ---------- */
+  /* ---------- 沉浸式菜品详情 ---------- */
   var modal = $("#dishModal");
+  var speech = window.speechSynthesis || null;
+  var speaking = false;
+  function stopSpeech() {
+    if (speech) speech.cancel();
+    speaking = false;
+    var b = $("#dmSpeak"); if (b) b.textContent = "▶ 听解说";
+  }
+  function speak(text) {
+    if (!speech) return alert("当前浏览器不支持语音朗读");
+    stopSpeech();
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = "zh-CN"; u.rate = 0.92; u.pitch = 0.95;
+    var vs = speech.getVoices().filter(function (v) { return /zh|Chinese/i.test(v.lang); });
+    if (vs.length) u.voice = vs[0];
+    u.onend = function () { speaking = false; var b = $("#dmSpeak"); if (b) b.textContent = "▶ 听解说"; };
+    speech.speak(u); speaking = true;
+    var b = $("#dmSpeak"); if (b) b.textContent = "❚❚ 解说中";
+  }
   function openDish(d) {
     if (!modal) return;
     $("#dmImg").src = d.img; $("#dmImg").alt = d.name;
-    $("#dmCuisine").textContent = d.cuisine;
+    $("#dmCuisine").textContent = (d.region ? d.region + " · " : "") + d.cuisine;
     $("#dmName").textContent = d.name;
     $("#dmFlavor").textContent = "味型：" + d.flavor;
+    $("#dmNarration").textContent = d.narration || (d.story + " 它的味道是" + d.flavor + "。");
     $("#dmIng").textContent = d.ingredients;
-    $("#dmStory").textContent = d.story;
     $("#dmAlias").textContent = d.alias ? "又名：" + d.alias : "";
+    var vid = $("#dmVideo"); if (vid) { vid.classList.remove("on"); vid.innerHTML = ""; }
     modal.classList.add("on"); modal.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
+    // 点击即开始解说（用户手势触发，允许播放）
+    setTimeout(function () { speak($("#dmNarration").textContent); }, 260);
   }
   function closeDish() {
     if (!modal) return;
+    stopSpeech();
     modal.classList.remove("on"); modal.setAttribute("aria-hidden", "true");
     document.body.style.overflow = "";
   }
   document.addEventListener("click", function (e) {
     var t = e.target.closest && e.target.closest(".dish-tile");
-    if (t && wall) {
-      var idx = $$(".dish-tile", wall).indexOf(t);
-      var d = DISHES.filter(function (x) { return !t.classList.contains("hide") ? true : false; })[idx];
-      // 直接按 data 匹配，避免过滤后错位
+    if (t) {
       var name = t.querySelector("h3") && t.querySelector("h3").textContent;
       var match = DISHES.filter(function (x) { return x.name === name; })[0];
       if (match) openDish(match);
@@ -185,109 +204,134 @@
   });
   var dmClose = $("#dmClose"); if (dmClose) dmClose.addEventListener("click", closeDish);
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeDish(); });
+  var dmSpeak = $("#dmSpeak"); if (dmSpeak) dmSpeak.addEventListener("click", function () { speak($("#dmNarration").textContent); });
+  var dmStop = $("#dmStop"); if (dmStop) dmStop.addEventListener("click", stopSpeech);
+  var dmVideoBtn = $("#dmVideoBtn");
+  if (dmVideoBtn) dmVideoBtn.addEventListener("click", function () {
+    var name = $("#dmName").textContent;
+    var d = DISHES.filter(function (x) { return x.name === name; })[0];
+    if (!d || !d.bv) { alert("这道菜的做法视频还在补充中"); return; }
+    var host = $("#dmVideo");
+    host.innerHTML = '<iframe src="https://player.bilibili.com/player.html?isOutside=true&bvid=' + d.bv +
+      '&autoplay=1&danmaku=0&high_quality=1" title="' + d.name + ' 做法" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
+    host.classList.add("on");
+    stopSpeech();
+  });
 
   /* ---------- 关系图谱 ---------- */
   var svg = $("#foodGraph");
   if (!svg) return;
   var panel = $("#graphPanel");
-  var W = 1000, H = 620;
+  var W = 1200, H = 760, CX = W / 2, CY = H / 2;
   svg.setAttribute("viewBox", "0 0 " + W + " " + H);
   var gLines = document.createElementNS(NS, "g");
   var gNodes = document.createElementNS(NS, "g");
   svg.appendChild(gLines); svg.appendChild(gNodes);
 
   var nodes = [], links = [], nodeMap = {};
-  function addNode(id, label, type, extra) {
+  function addNode(id, label, type, extra, x, y) {
     if (nodeMap[id]) return nodeMap[id];
-    var n = { id: id, label: label, type: type, x: W / 2 + (Math.random() - .5) * 300, y: H / 2 + (Math.random() - .5) * 240, vx: 0, vy: 0 };
+    var n = { id: id, label: label, type: type, x: x != null ? x : CX + (Math.random() - .5) * 420, y: y != null ? y : CY + (Math.random() - .5) * 340, vx: 0, vy: 0 };
     if (extra) for (var k in extra) n[k] = extra[k];
     nodes.push(n); nodeMap[id] = n; return n;
   }
-  function addLink(s, t, rel) { links.push({ s: nodeMap[s], t: nodeMap[t], rel: rel }); }
+  function addLink(s, t, rel) { if (nodeMap[s] && nodeMap[t]) links.push({ s: nodeMap[s], t: nodeMap[t], rel: rel }); }
 
-  var REGION = { "川菜": "四川", "粤菜": "广东", "苏菜": "江苏", "鲁菜": "山东" };
-  var TECH = { "川菜": ["炒", "烧", "爆"], "粤菜": ["蒸", "煲", "灼"], "苏菜": ["炖", "煨", "蒸"], "鲁菜": ["爆", "炒", "烧"] };
-  CUISINES.forEach(function (c) {
-    addNode("cu:" + c.name, c.name, "cuisine", { color: c.color });
-    addNode("rg:" + REGION[c.name], REGION[c.name], "region");
+  var REGION = { "川菜": "四川", "粤菜": "广东", "苏菜": "江苏", "鲁菜": "山东", "浙菜": "浙江", "闽菜": "福建", "湘菜": "湖南", "徽菜": "安徽" };
+  var TECH = { "川菜": ["炒", "烧", "爆"], "粤菜": ["蒸", "煲", "灼"], "苏菜": ["炖", "煨", "蒸"], "鲁菜": ["爆", "炒", "烧"], "浙菜": ["炒", "蒸", "烩"], "闽菜": ["煨", "蒸", "炒"], "湘菜": ["炒", "蒸", "腊"], "徽菜": ["烧", "炖", "熏"] };
+  var FEATURES = ["麻辣", "香辣", "咸鲜", "清鲜", "酸甜", "咸甜", "咸香", "酸香", "鲜香", "茶香", "发酵香", "重火功"];
+  var flavorNodes = {};
+
+  CUISINES.forEach(function (c, i) {
+    var ang = i / CUISINES.length * Math.PI * 2 - Math.PI / 2;
+    var R = 250;
+    var x = CX + Math.cos(ang) * R, y = CY + Math.sin(ang) * R * 0.78;
+    addNode("cu:" + c.name, c.name, "cuisine", { color: c.color }, x, y);
+    addNode("rg:" + REGION[c.name], REGION[c.name], "region", null, x + Math.cos(ang) * 70, y + Math.sin(ang) * 50);
     addLink("cu:" + c.name, "rg:" + REGION[c.name], "发源");
     (TECH[c.name] || []).forEach(function (t) {
-      var tid = "tc:" + t;
-      addNode(tid, t, "technique");
+      var tid = "tc:" + c.name + ":" + t;
+      addNode(tid, t, "technique", null, x + Math.cos(ang) * 120, y + Math.sin(ang) * 90 + 20);
       addLink("cu:" + c.name, tid, "常用技法");
     });
   });
   DISHES.forEach(function (d, i) {
-    var did = "dish:" + i;
-    addNode(did, d.name, "dish", { img: d.img, flavor: d.flavor, cuisine: d.cuisine });
-    addLink("cu:" + d.cuisine, did, "归属");
-    String(d.ingredients || "").split(/[、，,;；\/]/).map(function (x) { return x.trim(); }).filter(function (x) { return x && x.length > 1; }).forEach(function (ing) {
+    var ci = CUISINES.map(function (c) { return c.name; }).indexOf(d.cuisine);
+    var ang = ci / CUISINES.length * Math.PI * 2 - Math.PI / 2;
+    var x = CX + Math.cos(ang) * 250 + (Math.random() - .5) * 150;
+    var y = CY + Math.sin(ang) * 195 + (Math.random() - .5) * 120;
+    addNode("dish:" + i, d.name, "dish", { img: d.img, flavor: d.flavor, cuisine: d.cuisine }, x, y);
+    addLink("cu:" + d.cuisine, "dish:" + i, "归属");
+    String(d.ingredients || "").split(/[、，,;；\/]/).map(function (s) { return s.trim(); }).filter(function (s) { return s && s.length > 1; }).forEach(function (ing) {
       var iid = "ig:" + ing;
-      addNode(iid, ing, "ingredient");
-      addLink(did, iid, "主料");
+      addNode(iid, ing, "ingredient", null,
+        CX + Math.cos(ang) * 380 + (Math.random() - .5) * 200,
+        CY + Math.sin(ang) * 300 + (Math.random() - .5) * 160);
+      addLink("dish:" + i, iid, "主料");
+    });
+    FEATURES.forEach(function (f) {
+      if (d.flavor.indexOf(f) < 0) return;
+      if (!flavorNodes[f]) { flavorNodes[f] = true; addNode("fl:" + f, f, "flavor", null, CX + (Math.random() - .5) * 620, CY + (Math.random() - .5) * 420); }
+      addLink("dish:" + i, "fl:" + f, "味型");
     });
   });
 
-  // 简单力导向
   var alpha = 1;
   function tick() {
-    var k = 0.02, rep = 2600, spring = 0.02, center = 0.012;
+    var rep = 2300, spring = 0.022, center = 0.01;
     for (var i = 0; i < nodes.length; i++) {
       var a = nodes[i];
       for (var j = i + 1; j < nodes.length; j++) {
         var b = nodes[j], dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy + 1;
-        if (d2 < 240000) {
-          var f = rep / d2;
-          a.vx += dx * f; a.vy += dy * f; b.vx -= dx * f; b.vy -= dy * f;
-        }
+        if (d2 < 300000) { var f = rep / d2; a.vx += dx * f; a.vy += dy * f; b.vx -= dx * f; b.vy -= dy * f; }
       }
-      a.vx += (W / 2 - a.x) * center; a.vy += (H / 2 - a.y) * center;
-      a.vx *= 0.86; a.vy *= 0.86;
+      a.vx += (CX - a.x) * center * .35; a.vy += (CY - a.y) * center * .35;
+      a.vx *= 0.87; a.vy *= 0.87;
     }
     links.forEach(function (l) {
       var dx = l.t.x - l.s.x, dy = l.t.y - l.s.y, d = Math.sqrt(dx * dx + dy * dy) || 1;
-      var f = (d - 90) * spring;
+      var f = (d - 82) * spring;
       l.s.vx += dx / d * f; l.s.vy += dy / d * f;
       l.t.vx -= dx / d * f; l.t.vy -= dy / d * f;
     });
     nodes.forEach(function (n) {
       n.x += n.vx * alpha; n.y += n.vy * alpha;
-      n.x = Math.max(30, Math.min(W - 30, n.x)); n.y = Math.max(24, Math.min(H - 24, n.y));
+      n.x = Math.max(34, Math.min(W - 34, n.x)); n.y = Math.max(26, Math.min(H - 26, n.y));
     });
-    alpha *= 0.992;
+    alpha *= 0.996;
   }
 
-  var nodeEls = {}, lineEls = [];
+  var nodeEls = {}, linkEls = [];
   function build() {
     gLines.innerHTML = ""; gNodes.innerHTML = "";
-    lineEls = links.map(function (l) {
-      var ln = document.createElementNS(NS, "line");
-      ln.setAttribute("stroke", "rgba(242,234,217,.14)");
-      ln.setAttribute("stroke-width", "1");
-      gLines.appendChild(ln); return { el: ln, l: l };
+    linkEls = links.map(function (l) {
+      var p = document.createElementNS(NS, "path");
+      p.setAttribute("fill", "none");
+      p.setAttribute("stroke", "rgba(242,234,217,.13)");
+      p.setAttribute("stroke-width", "1");
+      gLines.appendChild(p); return { el: p, l: l };
     });
     nodes.forEach(function (n) {
       var g = document.createElementNS(NS, "g");
-      g.style.cursor = "pointer";
+      var r = n.type === "cuisine" ? 18 : n.type === "dish" ? 9 : n.type === "region" ? 13 : n.type === "flavor" ? 8 : 5;
       var c = document.createElementNS(NS, "circle");
-      var r = n.type === "cuisine" ? 15 : n.type === "dish" ? 8 : n.type === "region" ? 11 : 5;
       c.setAttribute("r", r);
       c.setAttribute("fill", n.color || COLOR[n.type] || "#888");
-      c.setAttribute("stroke", "rgba(242,234,217,.35)");
-      c.setAttribute("stroke-width", n.type === "cuisine" ? 2 : 1);
+      c.setAttribute("stroke", n.type === "cuisine" ? "rgba(255,246,232,.85)" : "rgba(242,234,217,.3)");
+      c.setAttribute("stroke-width", n.type === "cuisine" ? 2.4 : 1);
       g.appendChild(c);
       var t = document.createElementNS(NS, "text");
       t.textContent = n.label;
-      t.setAttribute("x", 0); t.setAttribute("y", -r - 5);
+      t.setAttribute("y", -r - 6);
       t.setAttribute("text-anchor", "middle");
-      t.setAttribute("font-size", n.type === "cuisine" ? 14 : n.type === "dish" ? 11 : 9);
-      t.setAttribute("fill", n.type === "cuisine" || n.type === "dish" || n.type === "region" ? "#f2ead9" : "rgba(242,234,217,.65)");
+      t.setAttribute("font-size", n.type === "cuisine" ? 16 : n.type === "dish" ? 11.5 : n.type === "region" ? 12 : 9.5);
+      t.setAttribute("fill", n.type === "cuisine" || n.type === "dish" || n.type === "region" ? "#f2ead9" : "rgba(242,234,217,.7)");
       t.setAttribute("class", "rg-label");
       if (n.type === "ingredient" || n.type === "technique") t.setAttribute("opacity", "0");
-      g.appendChild(t); g.appendChild(c);
+      g.appendChild(t);
       g.addEventListener("click", function (e) { e.stopPropagation(); showPanel(n); });
       gNodes.appendChild(g);
-      nodeEls[n.id] = { g: g, c: c, t: t, n: n };
+      nodeEls[n.id] = { g: g, c: c, t: t, n: n, base: c.getAttribute("fill") };
       enableDrag(g, n);
     });
   }
@@ -297,12 +341,12 @@
     g.addEventListener("pointerdown", function (e) {
       dragging = true; svg.classList.add("dragging");
       var pt = toLocal(e); sx = pt.x; sy = pt.y; ox = n.x; oy = n.y;
+      alpha = Math.max(alpha, .4);
       g.setPointerCapture && g.setPointerCapture(e.pointerId);
     });
     g.addEventListener("pointermove", function (e) {
       if (!dragging) return;
-      var pt = toLocal(e); n.x = ox + (pt.x - sx); n.y = oy + (pt.y - sy);
-      n.vx = 0; n.vy = 0; alpha = Math.max(alpha, .35); render();
+      var pt = toLocal(e); n.x = ox + (pt.x - sx); n.y = oy + (pt.y - sy); n.vx = 0; n.vy = 0; render();
     });
     g.addEventListener("pointerup", function () { dragging = false; svg.classList.remove("dragging"); });
     g.addEventListener("pointerleave", function () { dragging = false; svg.classList.remove("dragging"); });
@@ -311,16 +355,14 @@
     var r = svg.getBoundingClientRect();
     return { x: (e.clientX - r.left) / r.width * W, y: (e.clientY - r.top) / r.height * H };
   }
-
   function render() {
-    lineEls.forEach(function (o) {
-      o.el.setAttribute("x1", o.l.s.x); o.el.setAttribute("y1", o.l.s.y);
-      o.el.setAttribute("x2", o.l.t.x); o.el.setAttribute("y2", o.l.t.y);
+    linkEls.forEach(function (o) {
+      var a = o.l.s, b = o.l.t, mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      var dx = b.x - a.x, dy = b.y - a.y, d = Math.sqrt(dx * dx + dy * dy) || 1;
+      var cx = mx - dy / d * 18, cy = my + dx / d * 18;
+      o.el.setAttribute("d", "M" + a.x + "," + a.y + " Q" + cx + "," + cy + " " + b.x + "," + b.y);
     });
-    nodes.forEach(function (n) {
-      var e = nodeEls[n.id]; if (!e) return;
-      e.g.setAttribute("transform", "translate(" + n.x + "," + n.y + ")");
-    });
+    nodes.forEach(function (n) { var e = nodeEls[n.id]; if (e) e.g.setAttribute("transform", "translate(" + n.x + "," + n.y + ")"); });
   }
 
   var filterType = "all";
@@ -328,9 +370,9 @@
     nodes.forEach(function (n) {
       var e = nodeEls[n.id]; if (!e) return;
       var on = filterType === "all" || n.type === filterType;
-      e.c.setAttribute("opacity", on ? 1 : .14);
-      e.t.setAttribute("opacity", on && (filterType !== "all" || n.type === "cuisine" || n.type === "dish" || n.type === "region") ? 1 : (on ? .85 : 0));
-      if (filterType !== "all") e.t.setAttribute("opacity", on ? 1 : 0);
+      e.c.setAttribute("opacity", on ? 1 : .1);
+      var showLabel = on && (filterType !== "all" || n.type === "cuisine" || n.type === "dish" || n.type === "region" || n.type === "flavor");
+      e.t.setAttribute("opacity", showLabel ? 1 : (on ? .25 : 0));
     });
   }
   $$(".gt-chip").forEach(function (b) {
@@ -340,27 +382,23 @@
       dim();
     });
   });
-
   function showPanel(n) {
     if (!panel) return;
     var rel = links.filter(function (l) { return l.s === n || l.t === n; });
-    var items = rel.slice(0, 12).map(function (l) {
+    var items = rel.slice(0, 14).map(function (l) {
       var other = l.s === n ? l.t : l.s;
       return "<li>" + (l.s === n ? "→ " : "← ") + other.label + " <span style=\"color:#8a7f6b\">（" + l.rel + "）</span></li>";
     }).join("");
-    panel.innerHTML = "<h4>" + n.label + "</h4><div class=\"gp-type\">" + n.type.toUpperCase() + (n.flavor ? " · " + n.flavor : "") + "</div>" +
-      "<ul>" + (items || "<li>暂无关联</li>") + "</ul>";
+    panel.innerHTML = "<h4>" + n.label + "</h4><div class=\"gp-type\">" + n.type.toUpperCase() + (n.flavor ? " · " + n.flavor : "") + "</div><ul>" + (items || "<li>暂无关联</li>") + "</ul>";
     panel.classList.add("on");
   }
   svg.addEventListener("click", function () { panel && panel.classList.remove("on"); });
 
-  build();
-  var raf = null;
-  function loop() {
+  build(); dim();
+  (function loop() {
     tick(); render();
-    if (alpha > 0.02) raf = requestAnimationFrame(loop);
-    else raf = null;
-  }
-  loop();
+    alpha = Math.max(alpha * 0.997, 0.006);
+    requestAnimationFrame(loop);
+  })();
   onScroll();
 })();
