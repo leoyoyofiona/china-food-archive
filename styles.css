@@ -216,3 +216,4 @@ html.light .t-sun{display:none}html.light .t-moon{display:inline}
   .film-play{width:76px;height:76px}
 }
 @media (prefers-reduced-motion:reduce){.hero-bg{animation:none}html{scroll-behavior:auto}}
+.ep-btn[disabled]{opacity:.5;cursor:not-allowed}

@@ -69,25 +69,42 @@
   if (backtop) backtop.addEventListener("click", function () { window.scrollTo({ top: 0, behavior: "smooth" }); });
   window.addEventListener("scroll", onScroll, { passive: true });
 
-  /* ---------- 语音 ---------- */
-  var speech = window.speechSynthesis || null;
-  function stopSpeech() { if (speech) speech.cancel(); duckSpeech(false); }
-  function duckSpeech(on) {
-    ducked = on;
-    if (bgm && bgmOn) fadeTo(on ? 0.06 : 0.30, 500);
+  /* ---------- 真人旁白音频 ---------- */
+  var NARRATION_FILES = {
+    "01": "assets/audio/narration/ep01.mp3",
+    "02": "assets/audio/narration/ep02.mp3",
+    "03": "assets/audio/narration/ep03.mp3",
+    "04": "assets/audio/narration/ep04.mp3",
+    "05": "assets/audio/narration/ep05.mp3",
+    "06": "assets/audio/narration/ep06.mp3"
+  };
+  var narration = new Audio(); narration.preload = "none";
+  var narrationBtn = null;
+  function duckBgm(on) { ducked = on; if (bgm && bgmOn) fadeTo(on ? 0.06 : 0.30, 500); }
+  function stopNarration() {
+    try { narration.pause(); narration.currentTime = 0; } catch (e) {}
+    duckBgm(false);
+    if (narrationBtn) { narrationBtn.textContent = "▶ 听旁白"; narrationBtn = null; }
   }
-  function speak(text, btn) {
-    if (!speech) { alert("当前浏览器不支持语音朗读"); return; }
-    stopSpeech();
-    var u = new SpeechSynthesisUtterance(text);
-    u.lang = "zh-CN"; u.rate = 0.9; u.pitch = 0.92;
-    var vs = speech.getVoices().filter(function (v) { return /zh|Chinese/i.test(v.lang); });
-    if (vs.length) u.voice = vs[0];
-    u.onstart = function () { duckSpeech(true); if (btn) btn.textContent = "❚❚ 旁白中"; };
-    u.onend = function () { duckSpeech(false); if (btn) btn.textContent = "▶ 听旁白"; };
-    u.onerror = function () { duckSpeech(false); if (btn) btn.textContent = "▶ 听旁白"; };
-    speech.speak(u);
+  function playNarration(ep, btn) {
+    var src = NARRATION_FILES[ep];
+    if (!src) return;
+    stopNarration();
+    narrationBtn = btn;
+    narration.src = src;
+    var p = narration.play();
+    if (p && p.catch) p.catch(function () {
+      if (btn) { btn.textContent = "旁白录制中"; btn.disabled = true; }
+      narrationBtn = null; duckBgm(false);
+    });
+    if (btn) btn.textContent = "❚❚ 旁白中";
+    duckBgm(true);
   }
+  narration.addEventListener("ended", stopNarration);
+  narration.addEventListener("error", function () {
+    if (narrationBtn) { narrationBtn.textContent = "旁白录制中"; narrationBtn.disabled = true; }
+    narrationBtn = null; duckBgm(false);
+  });
 
   /* ---------- HERO ---------- */
   var hero = $(".hero"), heroBg = $(".hero-bg"), heroEp = $("#heroEp"), heroCap = $("#heroCap");
@@ -126,7 +143,7 @@
       "</div>";
     epWrap.appendChild(el);
     var btn = el.querySelector(".ep-btn.primary"), stop = el.querySelectorAll(".ep-btn")[1];
-    if (btn) btn.addEventListener("click", function () { speak(s.narration, btn); });
+    if (btn) btn.addEventListener("click", function () { playNarration(s.ep, btn); });
     if (stop) stop.addEventListener("click", stopSpeech);
     el.addEventListener("click", function (e) {
       var chip = e.target.closest && e.target.closest(".ep-dish");
@@ -226,7 +243,6 @@
     $("#dmIng").textContent = d.ingredients;
     var vid = $("#dmVideo"); if (vid) { vid.classList.remove("on"); vid.innerHTML = ""; }
     modal.classList.add("on"); modal.setAttribute("aria-hidden", "false"); document.body.style.overflow = "hidden";
-    setTimeout(function () { speak($("#dmNarration").textContent, $("#dmSpeak")); }, 260);
   }
   function closeDish() {
     if (!modal) return;
@@ -235,8 +251,6 @@
   var dmClose = $("#dmClose"); if (dmClose) dmClose.addEventListener("click", closeDish);
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeDish(); });
   if (modal) modal.addEventListener("click", function (e) { if (e.target === modal) closeDish(); });
-  var dmSpeak = $("#dmSpeak"); if (dmSpeak) dmSpeak.addEventListener("click", function () { speak($("#dmNarration").textContent, dmSpeak); });
-  var dmStop = $("#dmStop"); if (dmStop) dmStop.addEventListener("click", stopSpeech);
   var dmVideoBtn = $("#dmVideoBtn");
   if (dmVideoBtn) dmVideoBtn.addEventListener("click", function () {
     var name = $("#dmName").textContent;
@@ -244,7 +258,7 @@
     if (!d || !d.bv) { alert("这道菜的做法视频还在补充中"); return; }
     var host = $("#dmVideo");
     host.innerHTML = '<iframe src="https://player.bilibili.com/player.html?isOutside=true&bvid=' + d.bv + '&autoplay=1&danmaku=0&high_quality=1" title="' + d.name + ' 做法" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
-    host.classList.add("on"); stopSpeech();
+    host.classList.add("on"); stopNarration();
   });
 
   /* ---------- 关系图谱 ---------- */
