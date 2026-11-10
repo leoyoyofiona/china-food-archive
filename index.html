@@ -1,164 +1,195 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="day">
+<html lang="zh-CN">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>中华美食 · 各地风味档案｜一地一风味，一菜一山河</title>
-<meta name="description" content="一个以地域为线索的中华美食档案：川、粤、苏、鲁四大菜系，30 道代表菜，真实菜品照片、做法与来历。非官方、非商业。" />
-<meta name="theme-color" content="#f6f2e8" />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23a8342a'/%3E%3Ctext x='16' y='23' font-size='17' font-family='serif' fill='%23f6f2e8' text-anchor='middle'%3E食%3C/text%3E%3C/svg%3E" />
-<link rel="stylesheet" href="styles.css?v=1" />
+<meta name="description" content="一部关于中华各地美食的影像档案：川、粤、苏、鲁四大菜系，30 道代表菜，高清大图、纪录片式影像与动态风味关系图。非官方、非商业。" />
+<meta name="theme-color" content="#0d0b09" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c8402e'/%3E%3Ctext x='16' y='23' font-size='17' font-family='serif' fill='%23f2ead9' text-anchor='middle'%3E食%3C/text%3E%3C/svg%3E" />
+<link rel="stylesheet" href="styles.css?v=2" />
 </head>
 <body id="top">
 <a class="skip-link" href="#main">跳到主要内容</a>
 
-<header class="site-header" id="siteHeader">
-  <a class="brand" href="#top" aria-label="返回首页">
-    <span class="seal" aria-hidden="true">食</span>
-    <span class="brand-text"><strong>中华美食</strong><small>各地风味档案 · A REGIONAL FOOD ARCHIVE</small></span>
+<header class="top" id="topBar">
+  <a class="brand" href="#top">
+    <span class="seal">食</span>
+    <span class="brand-text"><strong>中华美食</strong><small>A REGIONAL FOOD ARCHIVE</small></span>
   </a>
-  <nav class="site-nav" aria-label="主导航">
-    <a href="#flavors">风味</a>
+  <nav class="nav" aria-label="主导航">
     <a href="#cuisines">菜系</a>
-    <a href="#skills">技法</a>
+    <a href="#dishes">招牌菜</a>
     <a href="#films">影像</a>
+    <a href="#graph">关系图谱</a>
     <a href="#stories">故事</a>
   </nav>
-  <div class="header-meta">
-    <button class="theme-toggle" type="button" aria-label="切换明暗主题" title="明 / 暗">
-      <span class="t-sun">☀</span><span class="t-moon">☾</span>
-    </button>
+  <div class="top-meta">
+    <button class="theme-toggle" type="button" aria-label="切换明暗" title="明 / 暗"><span class="t-sun">☀</span><span class="t-moon">☾</span></button>
   </div>
 </header>
 
+<!-- HERO -->
 <section class="hero" id="main">
-  <div class="hero-copy">
-    <p class="kicker reveal">中华美食 · 各地风味档案</p>
-    <h1 class="hero-title reveal">一地一风味<br /><em>一菜一山河</em></h1>
-    <p class="hero-sub reveal">从川渝的麻辣，到岭南的清鲜；从淮扬的刀工，到齐鲁的汤火。</p>
-    <p class="hero-desc reveal">这张档案不按菜谱排列，而按土地排列——气候、物产、迁徙与家常，决定了我们为什么这样吃。</p>
-    <div class="hero-cta reveal">
-      <a class="btn btn-primary" href="#cuisines">走进四大菜系 <span>↘</span></a>
-      <a class="btn btn-ghost" href="#flavors">先看风味总览</a>
+  <div class="hero-slides" id="heroSlides"></div>
+  <div class="hero-shade"></div>
+  <div class="hero-grain"></div>
+  <div class="hero-content">
+    <span class="chapter">CH. 01 / A REGIONAL FOOD ARCHIVE</span>
+    <h1 class="hero-title"><span>中华</span><span class="red">美食</span></h1>
+    <p class="hero-line">一地一风味 · 一菜一山河</p>
+    <p class="hero-desc">从川渝的麻辣，到岭南的清鲜；从淮扬的刀工，到齐鲁的汤火。<br />这是一部按土地排列的中华美食影像档案。</p>
+    <div class="hero-actions">
+      <a class="btn btn-red" href="#cuisines">开始观看 <span>↓</span></a>
+      <a class="btn btn-line" href="#films">直接看影像</a>
     </div>
-    <div class="hero-tags reveal" id="heroTags"></div>
   </div>
-  <div class="hero-media reveal">
-    <div class="hero-slides" id="heroSlides"></div>
-    <div class="hero-caption" id="heroCaption">—</div>
+  <div class="hero-foot">
+    <span class="hero-cap" id="heroCap">—</span>
     <div class="hero-dots" id="heroDots"></div>
+    <span class="scroll-cue">SCROLL</span>
   </div>
 </section>
 
-<div class="marquee" aria-hidden="true"><div class="marquee-track" id="marqueeTrack"></div></div>
-
-<section class="section manifest" id="flavors">
-  <header class="section-head reveal">
-    <p class="section-index">01 / FLAVOR MAP</p>
-    <h2>风味总览</h2>
-    <p class="section-sub">四大菜系只是入口。真正决定味道的，是它所在的那片水土。</p>
-  </header>
-  <div class="flavor-grid" id="flavorGrid"></div>
-  <p class="note reveal">首期收录川、粤、苏、鲁四个菜系；更多地方风味会陆续补入。</p>
-</section>
-
-<section class="section" id="cuisines">
-  <header class="section-head reveal">
-    <p class="section-index">02 / CUISINE ARCHIVE</p>
-    <h2>菜系档案</h2>
-    <p class="section-sub">每个菜系 7–8 道代表菜。点开卡片，看它的主料、味型与来历。</p>
-  </header>
-  <div id="cuisineBlocks"></div>
-</section>
-
-<section class="section skills" id="skills">
-  <header class="section-head reveal">
-    <p class="section-index">03 / TECHNIQUE</p>
-    <h2>烹饪技法</h2>
-    <p class="section-sub">同一口锅，不同火候，就是不同的中国。</p>
-  </header>
-  <div class="skill-grid reveal">
-    <div class="skill"><b>炒</b><span>旺火快翻，锅气最盛</span></div>
-    <div class="skill"><b>爆</b><span>极短时间，锁住脆嫩</span></div>
-    <div class="skill"><b>熘</b><span>勾芡裹汁，滑润挂味</span></div>
-    <div class="skill"><b>炸</b><span>油温分层，外酥里嫩</span></div>
-    <div class="skill"><b>烹</b><span>先煎后汁，汁尽味入</span></div>
-    <div class="skill"><b>煎</b><span>少油贴锅，两面金黄</span></div>
-    <div class="skill"><b>烧</b><span>先煸后焖，收汁浓香</span></div>
-    <div class="skill"><b>焖</b><span>加盖慢煨，酥烂入味</span></div>
-    <div class="skill"><b>炖</b><span>小火长时，汤清味厚</span></div>
-    <div class="skill"><b>蒸</b><span>以汽为媒，存其本味</span></div>
-    <div class="skill"><b>烤</b><span>明火或炉壁，焦香四溢</span></div>
-    <div class="skill"><b>拌</b><span>冷调生香，最见原料</span></div>
+<!-- INTRO -->
+<section class="intro">
+  <p class="intro-kicker">一部关于“怎么吃”的纪录片</p>
+  <p class="intro-lead">
+    味道不是凭空长出来的。它由气候、物产、迁徙、历史与家常一起决定——
+    所以我们按<b>地域</b>，而不是按菜单，来整理这份档案。
+  </p>
+  <div class="stats">
+    <div class="stat"><b>04</b><span>大菜系</span></div>
+    <div class="stat"><b>30</b><span>道代表菜</span></div>
+    <div class="stat"><b>12</b><span>部影像</span></div>
+    <div class="stat"><b>01</b><span>张风味关系图</span></div>
   </div>
 </section>
 
-<section class="section" id="films">
-  <header class="section-head reveal">
-    <p class="section-index">04 / FILMS</p>
+<!-- CUISINE CHAPTERS -->
+<section class="chapters" id="cuisines">
+  <header class="section-head">
+    <span class="chapter">CH. 02 / THE CUISINES</span>
+    <h2>四大菜系，四种山河</h2>
+    <p>每一章，都是一片土地的性格。</p>
+  </header>
+  <div id="chapterList"></div>
+</section>
+
+<!-- DISHES -->
+<section class="section dishes" id="dishes">
+  <header class="section-head">
+    <span class="chapter">CH. 03 / SIGNATURE DISHES</span>
+    <h2>招牌菜 · 30 道</h2>
+    <p>高清大图，点开看它的主料、味型与来历。</p>
+  </header>
+  <div class="dish-filters" id="dishFilters"></div>
+  <div class="dish-wall" id="dishWall"></div>
+</section>
+
+<!-- TECHNIQUE BAND -->
+<section class="band" id="skills">
+  <div class="band-inner">
+    <span class="chapter">CH. 04 / TECHNIQUE</span>
+    <h2>一口锅，万种火候</h2>
+    <div class="skill-row" id="skillRow"></div>
+  </div>
+</section>
+
+<!-- FILMS -->
+<section class="section films" id="films">
+  <header class="section-head">
+    <span class="chapter">CH. 05 / THE FILMS</span>
     <h2>影像馆</h2>
-    <p class="section-sub">纪录片与后厨实拍。点开在本页播放，同一时间只放一个。</p>
+    <p>整幅播放。同一时间，只放一部。</p>
   </header>
-  <div class="film-grid" id="filmGrid"></div>
-  <p class="note reveal">视频均来自 B 站公开内容，仅作非商业介绍；版权归原 UP 主与权利人。</p>
+  <div class="film-stage" id="filmStage">
+    <div class="film-poster" id="filmPoster">
+      <img id="filmPosterImg" alt="纪录片预览" />
+      <div class="film-overlay">
+        <span class="film-label">NOW SHOWING</span>
+        <h3 id="filmTitle">—</h3>
+        <p id="filmSub">—</p>
+        <button class="film-play" id="filmPlayBtn" type="button">▶ 播放</button>
+      </div>
+    </div>
+    <div class="film-frame" id="filmFrame"></div>
+  </div>
+  <div class="film-list" id="filmList"></div>
+  <p class="note">B 站公开内容，仅作非商业介绍；版权归原 UP 主与权利人。</p>
 </section>
 
-<section class="section stories" id="stories">
-  <header class="section-head reveal">
-    <p class="section-index">05 / STORIES</p>
+<!-- GRAPH -->
+<section class="section graph-sec" id="graph">
+  <header class="section-head">
+    <span class="chapter">CH. 06 / FLAVOR GRAPH</span>
+    <h2>风味关系图谱</h2>
+    <p>菜系、菜品、食材、地区与技法，如何彼此牵连。拖动节点，点开看关系。</p>
+  </header>
+  <div class="graph-wrap">
+    <svg id="foodGraph" role="img" aria-label="中华美食风味关系图"></svg>
+    <div class="graph-panel" id="graphPanel"></div>
+    <div class="graph-tools" id="graphTools">
+      <button class="gt-chip active" data-g="all">全部</button>
+      <button class="gt-chip" data-g="cuisine">菜系</button>
+      <button class="gt-chip" data-g="dish">菜品</button>
+      <button class="gt-chip" data-g="ingredient">食材</button>
+      <button class="gt-chip" data-g="region">地区</button>
+      <button class="gt-chip" data-g="technique">技法</button>
+    </div>
+  </div>
+  <p class="note">图谱为示意性整理：菜系—菜品为归属，菜品—食材为主料，菜系—地区为发源，菜系—技法为常用。</p>
+</section>
+
+<!-- STORIES -->
+<section class="stories" id="stories">
+  <header class="section-head">
+    <span class="chapter">CH. 07 / STORIES</span>
     <h2>食物背后</h2>
-    <p class="section-sub">一道菜的来历，往往比味道更长。</p>
   </header>
-  <div class="story-grid">
-    <article class="story reveal"><h3>移民与融合</h3><p>客家人把咸香带进山里，广府人把汤水带向海外；一次迁徙，就是一次口味的重组。</p></article>
-    <article class="story reveal"><h3>时令与节气</h3><p>春天吃芽、夏天吃瓜、秋天吃蟹、冬天吃根。中国人用舌尖记录季节。</p></article>
-    <article class="story reveal"><h3>家常即正宗</h3><p>很多“名菜”最初都是家常菜。真正的标准，是一家人围坐时的那口味道。</p></article>
-    <article class="story reveal"><h3>一地一物</h3><p>郫县豆瓣、金华火腿、五常大米、阳澄湖蟹——风物划定了味道的边界。</p></article>
+  <div class="quote-stack">
+    <blockquote><p>“很多名菜，最初都是家常菜。”</p><cite>— 家常即正宗</cite></blockquote>
+    <blockquote><p>“一次迁徙，就是一次口味的重组。”</p><cite>— 移民与融合</cite></blockquote>
+    <blockquote><p>“中国人用舌尖记录季节。”</p><cite>— 时令与节气</cite></blockquote>
+    <blockquote><p>“风物划定了味道的边界。”</p><cite>— 一地一物</cite></blockquote>
   </div>
 </section>
 
-<section class="section legal" id="legal">
-  <header class="section-head reveal">
-    <p class="section-index">◎ / DISCLAIMER</p>
-    <h2>说明</h2>
-  </header>
-  <div class="legal-body reveal">
-    <p>本站为非官方、非商业的美食文化档案，仅作介绍与欣赏，不提供任何商品、交易或配送服务。</p>
-    <p>菜品图片来自公开网页资料，已注明来源，仅作非商业介绍；如权利人认为使用不当，请联系我们移除。</p>
-    <p>菜系代表菜、做法与来历均为公开资料的整理，不同地区与家庭做法有差异，欢迎指正。</p>
-    <p>联系：<a href="mailto:leooelcn@gmail.com">leooelcn@gmail.com</a></p>
+<section class="legal" id="legal">
+  <div class="legal-inner">
+    <span class="chapter">◎ / DISCLAIMER</span>
+    <p>本站为非官方、非商业的美食文化档案，仅作介绍与欣赏，不提供商品、交易或配送服务。</p>
+    <p>菜品图片来自公开网页资料，仅作非商业介绍；如权利人认为使用不当，请联系移除。</p>
+    <p>菜系代表菜、做法与来历为公开资料整理，各地与家庭做法有差异，欢迎指正。联系：<a href="mailto:leooelcn@gmail.com">leooelcn@gmail.com</a></p>
   </div>
 </section>
 
-<footer class="site-footer">
-  <div class="footer-inner">
-    <span class="seal">食</span>
-    <p>中华美食 · 各地风味档案 · 一地一风味，一菜一山河</p>
-    <a href="#top">回到顶部 ↑</a>
-  </div>
+<footer class="footer">
+  <span class="seal">食</span>
+  <p>中华美食 · 各地风味档案 · 一地一风味，一菜一山河</p>
+  <a href="#top">回到开头 ↑</a>
 </footer>
 
+<!-- dish modal -->
 <div class="dish-modal" id="dishModal" aria-hidden="true">
-  <div class="dm-box" role="dialog" aria-modal="true" aria-label="菜品详情">
-    <button class="dm-close" id="dmClose" type="button" aria-label="关闭">✕</button>
+  <div class="dm-box">
+    <button class="dm-close" id="dmClose" aria-label="关闭">✕</button>
     <div class="dm-img"><img id="dmImg" alt="" /></div>
     <div class="dm-body">
       <span class="dm-cuisine" id="dmCuisine"></span>
       <h3 id="dmName"></h3>
       <p class="dm-flavor" id="dmFlavor"></p>
-      <dl>
-        <dt>主料</dt><dd id="dmIng"></dd>
-      </dl>
+      <dl><dt>主料</dt><dd id="dmIng"></dd></dl>
       <p class="dm-story" id="dmStory"></p>
       <p class="dm-alias" id="dmAlias"></p>
     </div>
   </div>
 </div>
 
-<button class="backtop" id="backtop" type="button" aria-label="回到顶部" title="回到顶部">↑</button>
+<button class="backtop" id="backtop" aria-label="回到顶部">↑</button>
 
-<script src="data.js?v=1"></script>
-<script src="app.js?v=1"></script>
+<script src="data.js?v=2"></script>
+<script src="app.js?v=2"></script>
 <script src="https://www.dengzhimin.cn/appnav.js" defer></script>
 </body>
 </html>
